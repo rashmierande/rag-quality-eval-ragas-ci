@@ -1,0 +1,98 @@
+[
+  {
+    "question": "How do I authenticate with the API?",
+    "answer": "Authentication requires an API key passed in the Authorization header as 'Bearer YOUR_API_KEY'. You can generate API keys in the developer dashboard under Settings > API Keys. Keys expire after 90 days.",
+    "contexts": [
+      "API authentication uses Bearer token authentication via the Authorization header.",
+      "Format: Authorization: Bearer YOUR_API_KEY",
+      "API keys can be generated from the developer dashboard at dashboard.example.com/settings/api-keys.",
+      "For security, API keys automatically expire after 90 days and must be rotated."
+    ],
+    "ground_truth": "Use Bearer token in Authorization header, generate keys from dashboard, keys expire after 90 days"
+  },
+  {
+    "question": "What is the rate limit for API requests?",
+    "answer": "The API has a rate limit of 1000 requests per hour for free tier users and 10,000 requests per hour for premium users. Rate limit headers are included in every response showing remaining quota.",
+    "contexts": [
+      "Free tier accounts are limited to 1000 API requests per hour.",
+      "Premium tier accounts can make up to 10,000 requests per hour.",
+      "Rate limit information is returned in response headers: X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset.",
+      "When rate limit is exceeded, the API returns a 429 Too Many Requests status code."
+    ],
+    "ground_truth": "1000 req/hour for free tier, 10,000 req/hour for premium, rate limit info in response headers"
+  },
+  {
+    "question": "How do I paginate through large result sets?",
+    "answer": "Use the 'page' and 'limit' query parameters. Default page size is 20 items, maximum is 100. The response includes 'next' and 'previous' URLs for easy navigation through pages.",
+    "contexts": [
+      "Pagination is controlled via query parameters: ?page=1&limit=20",
+      "Default page size is 20 items per page.",
+      "Maximum page size is 100 items per request.",
+      "Response includes pagination metadata with 'next' and 'previous' URLs for navigation.",
+      "Total count of items is included in the 'total' field of the response."
+    ],
+    "ground_truth": "Use page and limit parameters, default 20 items, max 100, response includes next/previous URLs"
+  },
+  {
+    "question": "What HTTP status codes does the API return?",
+    "answer": "The API uses standard HTTP status codes: 200 for success, 201 for created resources, 400 for bad requests, 401 for authentication errors, 404 for not found, 429 for rate limiting, and 500 for server errors. All error responses include a JSON body with error details.",
+    "contexts": [
+      "Success responses: 200 OK for successful GET/PUT/DELETE, 201 Created for successful POST.",
+      "Client errors: 400 Bad Request for invalid input, 401 Unauthorized for auth failures, 404 Not Found for missing resources.",
+      "Rate limiting: 429 Too Many Requests when rate limit exceeded.",
+      "Server errors: 500 Internal Server Error for unexpected failures.",
+      "All error responses include JSON with 'error' and 'message' fields providing details."
+    ],
+    "ground_truth": "200/201 success, 400 bad request, 401 unauthorized, 404 not found, 429 rate limit, 500 server error, all errors return JSON"
+  },
+  {
+    "question": "How do I filter results in a GET request?",
+    "answer": "Add filter parameters to the query string using the format ?field=value. Multiple filters can be combined with &. Supported operators include eq (equals), gt (greater than), lt (less than), and contains for text search.",
+    "contexts": [
+      "Filtering uses query parameters in the format ?field=value.",
+      "Multiple filters can be combined: ?status=active&created_gt=2024-01-01",
+      "Supported operators: eq (equals), gt (greater than), lt (less than), gte (greater than or equal), lte (less than or equal).",
+      "Text search uses the 'contains' operator: ?name_contains=test",
+      "Date filters use ISO 8601 format: ?created_gt=2024-01-01T00:00:00Z"
+    ],
+    "ground_truth": "Use query parameters with operators (eq, gt, lt, contains), combine with &, dates in ISO 8601 format"
+  },
+  {
+    "question": "What data format does the API accept and return?",
+    "answer": "The API accepts and returns JSON format. Set Content-Type: application/json for requests and Accept: application/json for responses. All timestamps use ISO 8601 format in UTC timezone.",
+    "contexts": [
+      "The API exclusively uses JSON for request and response bodies.",
+      "Request header must include: Content-Type: application/json",
+      "Response header includes: Content-Type: application/json; charset=utf-8",
+      "All date and time values use ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ).",
+      "Timestamps are always in UTC timezone."
+    ],
+    "ground_truth": "JSON only, Content-Type: application/json, timestamps in ISO 8601 UTC format"
+  },
+  {
+    "question": "How do I handle API errors in my application?",
+    "answer": "Check the HTTP status code first. For 4xx errors, parse the JSON error response which includes 'error' (error code) and 'message' (human-readable description). Implement exponential backoff for 429 and 5xx errors. Log error details for debugging.",
+    "contexts": [
+      "Always check the HTTP status code to determine error type.",
+      "Error responses include JSON body with 'error' field (machine-readable code) and 'message' field (human-readable description).",
+      "For 429 (rate limit) errors, implement exponential backoff retry strategy.",
+      "For 5xx server errors, retry with exponential backoff up to 3 times.",
+      "Log full error response including status code, error code, and message for debugging.",
+      "4xx client errors should not be retried as they indicate invalid requests."
+    ],
+    "ground_truth": "Check status code, parse JSON error body, implement exponential backoff for 429/5xx, log errors, don't retry 4xx"
+  },
+  {
+    "question": "Is there a sandbox environment for testing?",
+    "answer": "Yes, use sandbox.api.example.com for testing. Sandbox uses test API keys (prefix: test_sk_) and doesn't affect production data. All features are available except payment processing. Sandbox data resets every 24 hours.",
+    "contexts": [
+      "Sandbox environment is available at sandbox.api.example.com",
+      "Test API keys start with 'test_sk_' prefix and only work in sandbox.",
+      "Production keys start with 'live_sk_' and only work in production.",
+      "Sandbox environment mirrors all production features except actual payment processing.",
+      "Sandbox data is automatically reset every 24 hours at midnight UTC.",
+      "Rate limits in sandbox are the same as production."
+    ],
+    "ground_truth": "sandbox.api.example.com with test_sk_ keys, full features except payments, data resets every 24 hours"
+  }
+]
