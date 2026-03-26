@@ -52,7 +52,7 @@ jobs:
           
           | Metric | Score | Threshold | Status |
           |--------|-------|-----------|--------|
-          | Faithfulness | ${formatScore(results.faithfulness)} | 0.7 | ${getStatus(results.faithfulness, 0.7)} |
+          | Hallucination | ${formatScore(results.hallucination)} | 0.7 | ${getStatus(results.hallucination, 0.7)} |
           | Answer Relevancy | ${formatScore(results.answer_relevancy)} | 0.7 | ${getStatus(results.answer_relevancy, 0.7)} |
           | Context Precision | ${formatScore(results.context_precision)} | 0.7 | ${getStatus(results.context_precision, 0.7)} |
           | Context Recall | ${formatScore(results.context_recall)} | 0.7 | ${getStatus(results.context_recall, 0.7)} |
