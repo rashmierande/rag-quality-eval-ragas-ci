@@ -52,7 +52,19 @@ Context Recall      0.82            0.7             Pass
 ```
 ## Project Structure
 ```
+ragas-github-actions-demo/
+├── .github/
+│   └── workflows/
+│       └── ragas-tests.yml       # GitHub Actions workflow
+├── tests/
+│   ├── ragas_test.py             # Test execution script
+│   └── test_data.json            # Test dataset (Q&A pairs)
+├── prompts/
+│   └── api_assistant.py          # Example prompt template
+├── requirements.txt              # Python dependencies
+└── README.md                     # This file
 ```
+
 ## Test Data Format
 Test Data in 'tests/test_data.json' follows this structure:
 ``` json
@@ -83,11 +95,31 @@ Add entries to 'tests/test_data.json' with your own Q&A pairs.
 Replace OpenAI with AWS Bedrock, Azure OpenAI, or other provider by modifying RAGAs config.
 
 ## Example workflow
+1. Developer updates prompt template in `prompts/api_assistant.py`
+2. Creates pull request with changes
+3. GitHub Actions triggers automatically
+4. RAGAS evaluates answer quality against test dataset
+5. Results posted to PR as comment
+6. Build passes/fails based on thresholds
+7. Developer fixes issues if tests fail
+8. Merge when all tests pass
 
 ##Learn More
+- [RAGAS Documentation](https://docs.ragas.io/)
+- [GitHub Actions Documentation](https://docs.github.com/en/actions)
+- [Blog Post: Why RAG Quality Testing Matters](#) *(coming soon)*
 
 ## Contributing
+Contributions welcome! Feel free to:
+- Add more test cases
+- Improve the workflow
+- Add support for other LLM providers
+- Enhance the PR comment formatting
 
 ##License
 
 ##Questions?
+Open an issue or reach out on  https://www.linkedin.com/in/rashmierande/
+
+**⭐ If this helped you, please star the repo!**
+
