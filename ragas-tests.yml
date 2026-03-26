@@ -1,0 +1,68 @@
+name: RAGAS Quality Tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  ragas-evaluation:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        pip install ragas langchain openai pandas datasets
+        pip install -r requirements.txt
+    
+    - name: Run RAGAS tests
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      run: |
+        python tests/ragas_test.py
+    
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: ragas-results
+        path: test_results.json
+    
+    - name: Comment PR with results
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const results = JSON.parse(fs.readFileSync('test_results.json', 'utf8'));
+          
+          const formatScore = (score) => score.toFixed(2);
+          const getStatus = (score, threshold) => score >= threshold ? '✅' : '❌';
+          
+          const comment = `## 🤖 RAGAS Test Results
+          
+          | Metric | Score | Threshold | Status |
+          |--------|-------|-----------|--------|
+          | Faithfulness | ${formatScore(results.faithfulness)} | 0.7 | ${getStatus(results.faithfulness, 0.7)} |
+          | Answer Relevancy | ${formatScore(results.answer_relevancy)} | 0.7 | ${getStatus(results.answer_relevancy, 0.7)} |
+          | Context Precision | ${formatScore(results.context_precision)} | 0.7 | ${getStatus(results.context_precision, 0.7)} |
+          | Context Recall | ${formatScore(results.context_recall)} | 0.7 | ${getStatus(results.context_recall, 0.7)} |
+          
+          ${results.all_passed ? '✅ **All tests passed!** Safe to merge.' : '❌ **Some tests failed.** Please review and fix before merging.'}
+          `;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
