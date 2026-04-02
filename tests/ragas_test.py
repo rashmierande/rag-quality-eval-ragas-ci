@@ -2,6 +2,7 @@ import json
 import os
 import sys
 from datasets import Dataset
+from llm_config import get_ragas_llm, get_ragas_embeddings
 from ragas import evaluate
 from ragas.metrics import (
     faithfulness,
@@ -44,7 +45,9 @@ def run_ragas_evaluation():
             answer_relevancy,
             context_precision,
             context_recall
-        ]
+        ],
+        llm=get_ragas_llm(),
+        embeddings=get_ragas_embeddings(),
     )
     
     # Convert to dict

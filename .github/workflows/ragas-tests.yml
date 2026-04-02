@@ -21,12 +21,16 @@ jobs:
     
     - name: Install dependencies
       run: |
-        pip install ragas langchain openai pandas datasets
+        pip install ragas langchain openai pandas datasets langchain-ollama
         pip install -r requirements.txt
     
     - name: Run RAGAS tests
       env:
+        # provider + models (Ollama default, OpenAI optional)
+        LLM_PROVIDER: ${{ secrets.LLM_PROVIDER || 'ollama' }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        OPENAI_MODEL: ${{ secrets.OPENAI_MODEL || 'gpt-4o-mini' }}
+        OLLAMA_MODEL: ${{ secrets.OLLAMA_MODEL || 'llama3' }}
       run: |
         python tests/ragas_test.py
     
