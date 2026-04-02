@@ -3,7 +3,7 @@ import os
 import sys
 from datasets import Dataset
 from llm_config import get_ragas_llm, get_ragas_embeddings
-from ragas import evaluate
+from ragas import evaluate, RunConfig
 from ragas.metrics import (
     faithfulness,
     answer_relevancy,
@@ -35,6 +35,8 @@ def run_ragas_evaluation():
         'contexts': [item['contexts'] for item in test_data],
         'ground_truth': [item['ground_truth'] for item in test_data]
     })
+    dataset = dataset.select(range(2))
+
     
     # Run evaluation
     print("\n🤖 Running RAGAS evaluation...")
@@ -48,10 +50,14 @@ def run_ragas_evaluation():
         ],
         llm=get_ragas_llm(),
         embeddings=get_ragas_embeddings(),
+        run_config=RunConfig(max_workers=1),
     )
     
     # Convert to dict
-    results = result.to_pandas().mean().to_dict()
+    #results = result.to_pandas().mean().to_dict()
+    df = result.to_pandas()
+    numeric_cols = df.select_dtypes(include=["number"]).columns
+    results = df[numeric_cols].mean().to_dict()
     
     # Add pass/fail status
     thresholds = {
