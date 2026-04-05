@@ -75,77 +75,47 @@ jobs:
         script: |
           const fs = require('fs');
           const results = JSON.parse(fs.readFileSync('test_results.json', 'utf8'));
-          
-          # const formatScore = (score) => score.toFixed(2);
-          # const getStatus = (score, threshold) => score >= threshold ? '✅' : '❌';
+
           const safeScore = (value) => {
             if (typeof value !== 'number') return 'N/A';
             return value.toFixed(2);
-          };
+            };
 
           const getStatus = (score, threshold) => {
-           if (typeof score !== 'number') return '⚠️';
-           return score >= threshold ? '✅' : '❌';
+            if (typeof score !== 'number') return '⚠️';
+            return score >= threshold ? '✅' : '❌';
           };
 
           const metrics = [
-          { key: 'faithfulness', label: 'Faithfulness', threshold: 0.7 },
-          { key: 'answer_relevancy', label: 'Answer Relevancy', threshold: 0.7 },
-          { key: 'context_precision', label: 'Context Precision', threshold: 0.7 },
-          { key: 'context_recall', label: 'Context Recall', threshold: 0.7 },
+            { key: 'faithfulness',       label: 'Faithfulness',       threshold: 0.7 },
+            { key: 'answer_relevancy',   label: 'Answer Relevancy',   threshold: 0.7 },
+            { key: 'context_precision',  label: 'Context Precision',  threshold: 0.7 },
+            { key: 'context_recall',     label: 'Context Recall',     threshold: 0.7 },
           ];
-        
 
-          # let table = `## 🤖 RAGAS Test Results
-
-          # | Metric | Score | Threshold | Status |
-          # |--------|-------|-----------|--------|
-          # `;
-          let lines = [];
+          const lines = [];
           lines.push('## RAGAS Test Results');
           lines.push('');
           lines.push('| Metric | Score | Threshold | Status |');
           lines.push('|--------|-------|-----------|--------|');
 
+          for (const m of metrics) {
+            const score = results[m.key];
+            lines.push(`| ${m.label} | ${safeScore(score)} | ${m.threshold} | ${getStatus(score, m.threshold)} |`);
+          }
 
-            for (const m of metrics) {
-              const score = results[m.key];
-              table += `| ${m.label} | ${safeScore(score)} | ${m.threshold} | ${getStatus(score, m.threshold)} |
-            `;
-            }
-
-            # const summary = results.all_passed
-            #   ? '✅ **All tests passed!** Safe to merge.'
-            #   : '❌ **Some tests failed.** Please review and fix before merging.';
           lines.push('');
           if (results.all_passed) {
-          lines.push('✅ **All tests passed!** Safe to merge.');
+            lines.push('✅ **All tests passed!** Safe to merge.');
           } else {
-          lines.push('❌ **Some tests failed.** Please review and fix before merging.');
+            lines.push('❌ **Some tests failed.** Please review and fix before merging.');
           }
-          #const comment = `${table}
+
           const comment = lines.join('\n');
 
-        
-
-          # ${summary}
-          # `;
-
-          # const comment = `## 🤖 RAGAS Test Results
-          
-          # | Metric | Score | Threshold | Status |
-          # |--------|-------|-----------|--------|
-          # | Hallucination | ${formatScore(results.hallucination)} | 0.7 | ${getStatus(results.hallucination, 0.7)} |
-          # | Answer Relevancy | ${formatScore(results.answer_relevancy)} | 0.7 | ${getStatus(results.answer_relevancy, 0.7)} |
-          # | Context Precision | ${formatScore(results.context_precision)} | 0.7 | ${getStatus(results.context_precision, 0.7)} |
-          # | Context Recall | ${formatScore(results.context_recall)} | 0.7 | ${getStatus(results.context_recall, 0.7)} |
-          
-          # ${results.all_passed ? '✅ **All tests passed!** Safe to merge.' : '❌ **Some tests failed.** Please review and fix before merging.'}
-          # `;
-          
-          github.rest.issues.createComment({
+          await github.rest.issues.createComment({
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: comment
-          });c
+            body: comment,
+          });
