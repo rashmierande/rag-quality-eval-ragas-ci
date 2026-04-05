@@ -27,7 +27,8 @@ jobs:
         curl --retry 5 --retry-all-errors --retry-delay 5 http://localhost:11434/api/tags 
 
         # Load the model you use
-        ollama pull ${{ secrets.OLLAMA_MODEL || 'llama3' }}
+        #ollama pull ${{ secrets.OLLAMA_MODEL || 'llama3' }}
+        ollama pull qwen2.5:0.5b-instruct
         ollama pull ${{ secrets.OLLAMA_EMBED_MODEL || 'nomic-embed-text' }}
 
     
@@ -49,7 +50,8 @@ jobs:
         # OPENAI_MODEL: ${{ secrets.OPENAI_MODEL || 'gpt-4o-mini' }}
         # OLLAMA_MODEL: ${{ secrets.OLLAMA_MODEL || 'llama3' }}
         LLM_PROVIDER: ollama
-        OLLAMA_MODEL: ${{ secrets.OLLAMA_MODEL || 'llama3' }}
+        #OLLAMA_MODEL: ${{ secrets.OLLAMA_MODEL || 'llama3' }}
+        OLLAMA_MODEL: qwen2.5:0.5b-instruct   # example tiny model
         OLLAMA_EMBED_MODEL: ${{ secrets.OLLAMA_EMBED_MODEL || 'nomic-embed-text' }}
       run: |
         python tests/ragas_test.py
@@ -69,24 +71,62 @@ jobs:
           const fs = require('fs');
           const results = JSON.parse(fs.readFileSync('test_results.json', 'utf8'));
           
-          const formatScore = (score) => score.toFixed(2);
-          const getStatus = (score, threshold) => score >= threshold ? '✅' : '❌';
-          
-          const comment = `## 🤖 RAGAS Test Results
-          
+          # const formatScore = (score) => score.toFixed(2);
+          # const getStatus = (score, threshold) => score >= threshold ? '✅' : '❌';
+          const safeScore = (value) => {
+            if (typeof value !== 'number') return 'N/A';
+            return value.toFixed(2);
+          };
+
+          const getStatus = (score, threshold) => {
+           if (typeof score !== 'number') return '⚠️';
+           return score >= threshold ? '✅' : '❌';
+          };
+
+          const metrics = [
+          { key: 'faithfulness', label: 'Faithfulness', threshold: 0.7 },
+          { key: 'answer_relevancy', label: 'Answer Relevancy', threshold: 0.7 },
+          { key: 'context_precision', label: 'Context Precision', threshold: 0.7 },
+          { key: 'context_recall', label: 'Context Recall', threshold: 0.7 },
+          ];
+        
+
+          let table = `## 🤖 RAGAS Test Results
+
           | Metric | Score | Threshold | Status |
           |--------|-------|-----------|--------|
-          | Hallucination | ${formatScore(results.hallucination)} | 0.7 | ${getStatus(results.hallucination, 0.7)} |
-          | Answer Relevancy | ${formatScore(results.answer_relevancy)} | 0.7 | ${getStatus(results.answer_relevancy, 0.7)} |
-          | Context Precision | ${formatScore(results.context_precision)} | 0.7 | ${getStatus(results.context_precision, 0.7)} |
-          | Context Recall | ${formatScore(results.context_recall)} | 0.7 | ${getStatus(results.context_recall, 0.7)} |
-          
-          ${results.all_passed ? '✅ **All tests passed!** Safe to merge.' : '❌ **Some tests failed.** Please review and fix before merging.'}
           `;
+
+            for (const m of metrics) {
+              const score = results[m.key];
+              table += `| ${m.label} | ${safeScore(score)} | ${m.threshold} | ${getStatus(score, m.threshold)} |
+            `;
+            }
+
+            const summary = results.all_passed
+              ? '✅ **All tests passed!** Safe to merge.'
+              : '❌ **Some tests failed.** Please review and fix before merging.';
+
+            const comment = `${table}
+
+          ${summary}
+          `;
+
+          # const comment = `## 🤖 RAGAS Test Results
+          
+          # | Metric | Score | Threshold | Status |
+          # |--------|-------|-----------|--------|
+          # | Hallucination | ${formatScore(results.hallucination)} | 0.7 | ${getStatus(results.hallucination, 0.7)} |
+          # | Answer Relevancy | ${formatScore(results.answer_relevancy)} | 0.7 | ${getStatus(results.answer_relevancy, 0.7)} |
+          # | Context Precision | ${formatScore(results.context_precision)} | 0.7 | ${getStatus(results.context_precision, 0.7)} |
+          # | Context Recall | ${formatScore(results.context_recall)} | 0.7 | ${getStatus(results.context_recall, 0.7)} |
+          
+          # ${results.all_passed ? '✅ **All tests passed!** Safe to merge.' : '❌ **Some tests failed.** Please review and fix before merging.'}
+          # `;
           
           github.rest.issues.createComment({
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
             body: comment
-          });
+          });c
