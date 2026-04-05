@@ -53,7 +53,11 @@ def run_ragas_evaluation():
         ],
         llm=ragas_llm,
         embeddings=ragas_embeddings,
-        run_config=RunConfig(max_workers=1),
+        run_config=RunConfig(timeout=600,
+                             max_workers=1,
+                             max_retries=3,
+                             max_wait=60,
+                             log_tenacity=True),
     )    
     
     # Convert to dict
