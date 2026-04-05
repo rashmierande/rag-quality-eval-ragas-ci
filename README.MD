@@ -2,7 +2,7 @@
 [[!RAGAS Tests](https://github.com/rashmierande/rag-quality-eval-ragas-ci/actions/workflowes/ragas-tests.yml/badge.svg)](https://github.com/rashmierande/rag-quality-eval-ragas-ci/actions/workflows/ragas-tests.yml)
 
 Automatically test RAG answer quality on every pull request using RAGAs metrics and GitHub Actions.
-Demo change to trigger RAGAS workflow.
+Demo for the RAGAS tests
 
 ## What this does:
 This project demonstrates how to:
@@ -13,7 +13,7 @@ This project demonstrates how to:
 
 # Metrics Evaluated
 Metrics                    What It Measures                                               Threshold
-Hallucination              Answer uses only retrieved context (no hallucinations)         >=0.7
+Faithfulness               Answer uses only retrieved context (no hallucinations)         >=0.7
 Relevancy                  Answer addresses the question asked                            >=0.7
 Context Precision          Retrived documents are relevant to the question                >=0.7
 Context Recall             All necessary context was retrieved                            >=0.7
@@ -44,7 +44,7 @@ Tests run automatically on every PR. Results appear as a comment:
 ``` markdown
 ## RAGAs Test Results
 Metric              Score           Threshold       Status
-Hallucination       0.78            0.7             Pass
+Faithfulness        0.78            0.7             Pass
 Relevancy           0.85            0.7             Pass
 Context Precision   0.79            0.7             Pass
 Context Recall      0.82            0.7             Pass
@@ -84,7 +84,7 @@ Test Data in 'tests/test_data.json' follows this structure:
 Edit 'tests/ragas_test.py`:
 ```python
 thresholds = {
-    'hallucination':0.8, #Increase for stricter checks
+    'faithfulness':0.8, #Increase for stricter checks
     'relevancy':0.7,
     'context_precision':0.7,
     'context_recall':0.7
