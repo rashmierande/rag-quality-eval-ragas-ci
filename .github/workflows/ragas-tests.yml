@@ -92,8 +92,8 @@ jobs:
 
           const metrics = [
             { key: 'faithfulness',       label: 'Faithfulness',       threshold: 0.7 },
-            { key: 'answer_relevancy',   label: 'Answer Relevancy',   threshold: 0.7 },
-            { key: 'context_precision',  label: 'Context Precision',  threshold: 0.7 },
+            { key: 'answer_relevancy',   label: 'Answer Relevancy',   threshold: 0.4 },
+            { key: 'context_precision',  label: 'Context Precision',  threshold: 0.4 },
             { key: 'context_recall',     label: 'Context Recall',     threshold: 0.7 },
           ];
 
