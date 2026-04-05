@@ -4,11 +4,11 @@ import sys
 from datasets import Dataset
 from llm_config import get_ragas_llm, get_ragas_embeddings
 from ragas import evaluate, RunConfig
-from ragas.metrics.collections import (
+from ragas.metrics import (
     faithfulness,
     answer_relevancy,
     context_precision,
-    context_recall
+    context_recall,
 )
 
 def load_test_data():
@@ -36,6 +36,9 @@ def run_ragas_evaluation():
         'ground_truth': [item['ground_truth'] for item in test_data]
     })
     dataset = dataset.select(range(2))
+    # Create RAGAS LLM + embeddings once
+    ragas_llm = get_ragas_llm()
+    ragas_embeddings = get_ragas_embeddings()
 
     
     # Run evaluation
@@ -46,12 +49,12 @@ def run_ragas_evaluation():
             faithfulness,
             answer_relevancy,
             context_precision,
-            context_recall
+            context_recall,
         ],
-        llm=get_ragas_llm(),
-        embeddings=get_ragas_embeddings(),
+        llm=ragas_llm,
+        embeddings=ragas_embeddings,
         run_config=RunConfig(max_workers=1),
-    )
+    )    
     
     # Convert to dict
     #results = result.to_pandas().mean().to_dict()
