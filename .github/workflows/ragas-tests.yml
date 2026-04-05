@@ -96,11 +96,17 @@ jobs:
           ];
         
 
-          let table = `## 🤖 RAGAS Test Results
+          # let table = `## 🤖 RAGAS Test Results
 
-          | Metric | Score | Threshold | Status |
-          |--------|-------|-----------|--------|
-          `;
+          # | Metric | Score | Threshold | Status |
+          # |--------|-------|-----------|--------|
+          # `;
+          let lines = [];
+          lines.push('## RAGAS Test Results');
+          lines.push('');
+          lines.push('| Metric | Score | Threshold | Status |');
+          lines.push('|--------|-------|-----------|--------|');
+
 
             for (const m of metrics) {
               const score = results[m.key];
@@ -108,14 +114,22 @@ jobs:
             `;
             }
 
-            const summary = results.all_passed
-              ? '✅ **All tests passed!** Safe to merge.'
-              : '❌ **Some tests failed.** Please review and fix before merging.';
+            # const summary = results.all_passed
+            #   ? '✅ **All tests passed!** Safe to merge.'
+            #   : '❌ **Some tests failed.** Please review and fix before merging.';
+          lines.push('');
+          if (results.all_passed) {
+          lines.push('✅ **All tests passed!** Safe to merge.');
+          } else {
+          lines.push('❌ **Some tests failed.** Please review and fix before merging.');
+          }
+          #const comment = `${table}
+          const comment = lines.join('\n');
 
-            const comment = `${table}
+        
 
-          ${summary}
-          `;
+          # ${summary}
+          # `;
 
           # const comment = `## 🤖 RAGAS Test Results
           
