@@ -4,7 +4,7 @@ import sys
 from datasets import Dataset
 from llm_config import get_ragas_llm, get_ragas_embeddings
 from ragas import evaluate, RunConfig
-from ragas.metrics import (
+from ragas.metrics.collections import (
     faithfulness,
     answer_relevancy,
     context_precision,
