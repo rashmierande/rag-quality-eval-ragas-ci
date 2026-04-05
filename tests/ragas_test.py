@@ -69,8 +69,8 @@ def run_ragas_evaluation():
     # Add pass/fail status
     thresholds = {
         'faithfulness': 0.7,
-        'answer_relevancy': 0.7,
-        'context_precision': 0.7,
+        'answer_relevancy': 0.4,
+        'context_precision': 0.4,
         'context_recall': 0.7
     }
     

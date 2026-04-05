@@ -28,8 +28,8 @@ jobs:
 
         # Load the model you use
         #ollama pull ${{ secrets.OLLAMA_MODEL || 'llama3' }}
-        ollama pull llama3
-        #ollama pull qwen2.5:0.5b-instruct
+        #ollama pull llama3
+        ollama pull qwen2.5:0.5b-instruct
         ollama pull ${{ secrets.OLLAMA_EMBED_MODEL || 'nomic-embed-text' }}
 
     
