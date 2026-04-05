@@ -2,6 +2,7 @@
 [[!RAGAS Tests](https://github.com/rashmierande/rag-quality-eval-ragas-ci/actions/workflowes/ragas-tests.yml/badge.svg)](https://github.com/rashmierande/rag-quality-eval-ragas-ci/actions/workflows/ragas-tests.yml)
 
 Automatically test RAG answer quality on every pull request using RAGAs metrics and GitHub Actions.
+Demo change to trigger RAGAS workflow.
 
 ## What this does:
 This project demonstrates how to:

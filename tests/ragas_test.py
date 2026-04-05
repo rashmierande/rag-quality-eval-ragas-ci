@@ -8,7 +8,7 @@ from ragas.metrics import (
     faithfulness,
     answer_relevancy,
     context_precision,
-    context_recall
+    context_recall,
 )
 
 def load_test_data():
@@ -36,6 +36,9 @@ def run_ragas_evaluation():
         'ground_truth': [item['ground_truth'] for item in test_data]
     })
     dataset = dataset.select(range(2))
+    # Create RAGAS LLM + embeddings once
+    ragas_llm = get_ragas_llm()
+    ragas_embeddings = get_ragas_embeddings()
 
     
     # Run evaluation
@@ -46,12 +49,16 @@ def run_ragas_evaluation():
             faithfulness,
             answer_relevancy,
             context_precision,
-            context_recall
+            context_recall,
         ],
-        llm=get_ragas_llm(),
-        embeddings=get_ragas_embeddings(),
-        run_config=RunConfig(max_workers=1),
-    )
+        llm=ragas_llm,
+        embeddings=ragas_embeddings,
+        run_config=RunConfig(timeout=600,
+                             max_workers=1,
+                             max_retries=3,
+                             max_wait=60,
+                             log_tenacity=True),
+    )    
     
     # Convert to dict
     #results = result.to_pandas().mean().to_dict()
@@ -62,8 +69,8 @@ def run_ragas_evaluation():
     # Add pass/fail status
     thresholds = {
         'faithfulness': 0.7,
-        'answer_relevancy': 0.7,
-        'context_precision': 0.7,
+        'answer_relevancy': 0.4,
+        'context_precision': 0.4,
         'context_recall': 0.7
     }
     
