@@ -11,6 +11,16 @@ from ragas.metrics import (
     context_recall,
 )
 
+print("CONFIG:")
+print("  LLM_PROVIDER =", os.getenv("LLM_PROVIDER"))
+print("  OLLAMA_MODEL =", os.getenv("OLLAMA_MODEL"))
+print("  OLLAMA_EMBED_MODEL =", os.getenv("OLLAMA_EMBED_MODEL"))
+print("  RAGAS_SAMPLE_SIZE =", os.getenv("RAGAS_SAMPLE_SIZE"))
+print("  RAGAS_FAITHFULNESS_T =", os.getenv("RAGAS_FAITHFULNESS_T"))
+print("  RAGAS_ANS_REL_T =", os.getenv("RAGAS_ANS_REL_T"))
+print("  RAGAS_CTX_PREC_T =", os.getenv("RAGAS_CTX_PREC_T"))
+print("  RAGAS_CTX_REC_T =", os.getenv("RAGAS_CTX_REC_T"))
+
 def load_test_data():
     """Load test data from JSON file"""
     with open('tests/test_data.json', 'r') as f:
